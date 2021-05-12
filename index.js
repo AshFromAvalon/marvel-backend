@@ -1,11 +1,13 @@
 // Dependecies
 const express = require("express");
 const formidableMiddleware = require("express-formidable");
+const cors = require("cors");
 require("dotenv").config();
 
 // Server config
 const app = express();
 app.use(formidableMiddleware());
+app.use(cors());
 
 // Import routes
 const comicsRoutes = require("./routes/comics");
