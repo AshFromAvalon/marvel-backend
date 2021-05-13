@@ -12,13 +12,7 @@ router.get("/characters", async (req, res) => {
     const { limit, skip } = req.query;
 
     const response = await axios.get(`${url}?apiKey=${myApiKey}`);
-
-    const numOfItemsToDisplay = limit;
-    const numOfItemsToSkip = skip;
-    const characters = response.data.results.slice(
-      numOfItemsToSkip,
-      numOfItemsToDisplay
-    );
+    const characters = response.data.results.slice(skip, limit);
 
     res.status(200).json(characters);
   } catch (error) {
