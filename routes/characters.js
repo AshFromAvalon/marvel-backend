@@ -9,10 +9,20 @@ const myApiKey = process.env.MARVEL_API_KEY;
 router.get("/characters", async (req, res) => {
   try {
     // Destructure query params
-    const { limit, skip } = req.query;
+    const { limit, skip, name } = req.query;
 
     const response = await axios.get(`${url}?apiKey=${myApiKey}`);
-    const characters = response.data.results.slice(skip, limit);
+
+    let regexp;
+    if (name) {
+      regexp = new RegExp(name, "i");
+    }
+
+    const characters = name
+      ? response.data.results.filter((character) =>
+          character.name.match(regexp)
+        )
+      : response.data.results.slice(skip, limit);
 
     res.status(200).json(characters);
   } catch (error) {
