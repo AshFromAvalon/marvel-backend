@@ -19,9 +19,9 @@ router.get("/characters", async (req, res) => {
     }
 
     const characters = name
-      ? response.data.results.filter((character) =>
-          character.name.match(regexp)
-        )
+      ? response.data.results
+          .filter((character) => character.name.match(regexp))
+          .slice(skip, limit)
       : response.data.results.slice(skip, limit);
 
     res.status(200).json(characters);
