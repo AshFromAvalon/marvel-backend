@@ -18,7 +18,9 @@ router.get("/comics", async (req, res) => {
     }
 
     const comics = title
-      ? response.data.results.filter((comic) => comic.title.match(regexp))
+      ? response.data.results
+          .filter((comic) => comic.title.match(regexp))
+          .slice(skip, limit)
       : response.data.results.slice(skip, limit);
 
     res.status(200).json(comics);
