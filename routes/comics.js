@@ -14,7 +14,12 @@ router.get("/comics", async (req, res) => {
 
     let regexp;
     if (title) {
-      regexp = new RegExp(title, "i");
+      const cleanTitle = (text) => {
+        text.replace("(", "\\(");
+        text.replace(")", "\\)");
+        return text;
+      };
+      regexp = new RegExp(cleanTitle(title), "i");
     }
 
     const comics = title
