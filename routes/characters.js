@@ -13,14 +13,39 @@ router.get("/characters", async (req, res) => {
 
     const response = await axios.get(`${url}?apiKey=${myApiKey}`);
 
-    let regexp;
-    if (name) {
-      regexp = new RegExp(name, "i");
-    }
+    const regexOf = (text) => {
+      const arr = text.split(" ");
+      let regexp = "";
+
+      const escaped = (word) => {
+        const arr = word.split("");
+        let str = "";
+        arr.forEach((letter) => {
+          letter === "(" || letter === ")"
+            ? (str += `\\${letter}`)
+            : (str += letter);
+        });
+        return str;
+      };
+
+      arr.forEach((word, index) => {
+        if (word.includes("(") || word.includes(")")) {
+          word = escaped(word);
+        }
+
+        if (index + 1 === arr.length) {
+          regexp = regexp + `${word}`;
+        } else {
+          regexp = regexp + `${word}\\s`;
+        }
+      });
+
+      return new RegExp(regexp, "i");
+    };
 
     const characters = name
       ? response.data.results
-          .filter((character) => character.name.match(regexp))
+          .filter((character) => character.name.match(regexOf(name)))
           .slice(skip, limit)
       : response.data.results.slice(skip, limit);
 
