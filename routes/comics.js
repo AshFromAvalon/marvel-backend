@@ -12,19 +12,39 @@ router.get("/comics", async (req, res) => {
 
     const response = await axios.get(`${url}?apiKey=${myApiKey}`);
 
-    let regexp;
-    if (title) {
-      const cleanTitle = (text) => {
-        text.replace("(", "\\(");
-        text.replace(")", "\\)");
-        return text;
+    const regexOf = (text) => {
+      const arr = text.split(" ");
+      let regexp = "";
+
+      const escaped = (word) => {
+        const arr = word.split("");
+        let str = "";
+        arr.forEach((letter) => {
+          letter === "(" || letter === ")"
+            ? (str += `\\${letter}`)
+            : (str += letter);
+        });
+        return str;
       };
-      regexp = new RegExp(cleanTitle(title), "i");
-    }
+
+      arr.forEach((word, index) => {
+        if (word.includes("(") || word.includes(")")) {
+          word = escaped(word);
+        }
+
+        if (index + 1 === arr.length) {
+          regexp = regexp + `${word}`;
+        } else {
+          regexp = regexp + `${word}\\s`;
+        }
+      });
+
+      return new RegExp(regexp, "i");
+    };
 
     const comics = title
       ? response.data.results
-          .filter((comic) => comic.title.match(regexp))
+          .filter((comic) => comic.title.match(regexOf(title)))
           .slice(skip, limit)
       : response.data.results.slice(skip, limit);
 
